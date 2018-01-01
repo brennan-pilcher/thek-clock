@@ -1,2 +1,2 @@
 # thek-clock
-An experiment made with p5.js for my Outsider Art class in 2015.
+An experiment made with [Processing.js](http://processingjs.org/) for my Outsider Art class in 2015.
