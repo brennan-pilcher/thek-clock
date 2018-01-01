@@ -1,0 +1,210 @@
+<html>
+
+<title> Paul Thek - Clock Face </title>
+
+<script src="processing.min.js"></script>
+
+</script>
+
+<style>
+
+	body {
+		background-color: #424B54;
+		margin: 0;
+		padding: 0;
+	}
+
+	#thek {
+		position: absolute;
+		padding: 0%;
+		top: 50%;
+		left: 50%;
+		margin: -318px;
+		height: 600px;
+		width: 600px;
+		border-style: solid;
+		box-shadow: 0px 0px 60px 5px black;
+	}
+
+
+</style>
+
+<body>
+
+ <script type="text/processing" data-processing-target="processing-canvas">
+	 // variables
+	int centerPointX = 300;
+	int centerPointY = 300;
+
+	float arcOffset = PI;
+	float arcSecond = TWO_PI / (24.0 * 60.0);
+
+	int sec = second();
+	int min = minute();
+	int hour_var = 6;
+	int day_var = 25;
+	int month_var = 12;
+	//int year = year();
+	//int millisec = millis();
+
+	float earthX, earthY, earthOrbit, earthOrbitRadius, earthOrbitIncrement;
+
+	float hourX, hourY, hourOrbit, hourOrbitRadius, hourOrbitIncrement;
+
+	float hourIncrement;
+	float hourColor = 0.0;;
+
+	int rectSize = 200;
+	int rectSizeHalf = rectSize/2;
+
+	float[]starsX = new float[150];
+	float[]starsY = new float[150];
+
+	void setup()
+	{
+	  size(600, 600);
+	  smooth();
+	  frameRate(60);
+
+	  earthOrbitRadius = 275;
+	  earthOrbit = PI + QUARTER_PI;
+	  earthOrbitIncrement = TWO_PI/360.0;
+
+	  hourOrbitRadius = 75;
+	  hourOrbit = PI + QUARTER_PI;
+	  hourOrbitIncrement = TWO_PI/24.0;
+
+	  //hourIncrement =
+	  for(int i = 0; i < 150; i++)
+	   {
+	      starsX[i] = random(600);
+	      starsY[i] = random(600);
+	   }
+
+	}
+
+	void draw()
+	{
+	 //background( 0, 160, 176 ); BLUE BG COLOR
+	 background(0);
+
+	 //millisec = millis();
+	 sec = second();
+	 min = minute();
+	 //year = year();
+
+	 //hour = 0;
+
+	 if( hour == 0.0 ){ hourColor = 0.0; }
+	 else if( hour == 12.0 ){ hourColor = 255.0; }
+	 else if( hour > 0.0 && hour < 12.0 )
+	 {
+	   hourColor = (255.0 / 12.0) * hour;
+	 }
+	 else if( hour > 12.0 && hour < 24.0 )
+	 {
+	   hourColor = 255.0 - ((255.0 / 12.0) * (hour-12.0) );
+	 }
+
+	 //changes per second
+	 arcOffset += arcSecond;
+	 //println(millisec);
+
+
+	 for(int i = 0; i < 150; i++)
+	 {
+	   stroke(255);
+	   point( starsX[i], starsY[i] );
+	 }
+
+	  rectMode(CENTER);
+	  //println(this.originX+"  :  "+mouseX);
+	  pushMatrix();
+	  translate(centerPointX, centerPointY);
+	  rotate( radians(45) );
+
+	  //stroke(this._color);
+	  noStroke();
+	  //fill( 235, 51, 48 ); RED COLOR
+	  fill(160, 160, 160, 120);
+	  rect(0, 0, rectSize+12, rectSize+12);
+
+	  fill( 0, 160, 176 );
+	  rect(0, 0, rectSize, rectSize);
+
+	  fill( 128, 100, 67 );
+	  rect(0, 0, 80, 80 );
+
+
+
+	  // center
+	  fill(0);
+	  ellipseMode(CENTER);
+	  ellipse(0, 0, 32, 32);
+
+	  fill(255);
+	  arc(0, 0, 32, 32, 0 + arcOffset, PI + arcOffset);
+
+	  //fill(0);
+	  noFill();
+	  stroke(255);
+	  //arc(0, 0, 32, 32, PI+QUARTER_PI, PI+QUARTER_PI + ( (TWO_PI / 1000.0)*(millisec % 1000.0) ));
+
+	  noStroke();
+
+	  // day_varlight point
+	  fill(255);
+	  arc(-rectSizeHalf, -rectSizeHalf, 32, 32, 0 , HALF_PI);
+
+	  // noon point
+	  fill(0);
+	  arc(rectSizeHalf, -rectSizeHalf, 32, 32,  QUARTER_PI + (QUARTER_PI) , HALF_PI + (QUARTER_PI));
+	  fill(255);
+	  arc(rectSizeHalf, -rectSizeHalf, 32, 32,  QUARTER_PI + (HALF_PI) , HALF_PI + (HALF_PI));
+
+
+	  // sunset point
+	  fill(0);
+	  arc(rectSizeHalf, rectSizeHalf, 32, 32, PI , PI+HALF_PI);
+
+
+	  // midnight point
+	  fill(255);
+	  arc(-rectSizeHalf, rectSizeHalf, 32, 32, QUARTER_PI + (QUARTER_PI) + PI , HALF_PI + (QUARTER_PI) + PI );
+	  fill(0);
+	  arc(-rectSizeHalf, rectSizeHalf, 32, 32,  QUARTER_PI + (HALF_PI) + PI, HALF_PI + (HALF_PI) + PI);
+
+
+	  popMatrix();
+
+	  fill(239,229,69);
+	  // earth
+
+	  earthOrbit = (PI + HALF_PI) + (((30.0*(month_var)) + day_var) * earthOrbitIncrement);
+
+	  earthX = centerPointX + cos( earthOrbit ) * earthOrbitRadius;
+	  earthY = centerPointY + sin( earthOrbit ) * earthOrbitRadius;
+
+	  ellipse( earthX, earthY, 16, 16 );
+
+
+	  // hour
+	  fill(hourColor);
+
+	  hourOrbit = (PI) + (hour_var * hourOrbitIncrement);
+
+	  hourX = centerPointX + cos( hourOrbit ) * hourOrbitRadius;
+	  hourY = centerPointY + sin( hourOrbit ) * hourOrbitRadius;
+
+	  ellipse( hourX, hourY, 10, 10 );
+	}
+ </script>
+
+
+	<div id="thek" >
+ <canvas id="processing-canvas"> </canvas>
+	</div>
+
+	</body>
+
+</html>
